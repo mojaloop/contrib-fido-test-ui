@@ -24,47 +24,17 @@ const enterConsentSection = document.getElementById('enterConsent')
 const consentTextArea = document.getElementById('consentTextArea')
 const submitConsentButton = document.getElementById('submitConsentButton')
 const consentInvalidHelp = document.getElementById('consentInvalidHelp')
-
 const enterDerivedChallengeSection = document.getElementById('enterDerivedChallenge')
 const submitChallengeField = document.getElementById('submitChallengeField')
 const generatedChallengeInput = document.getElementById('generatedChallengeInput')
 const submitChallengeButton = document.getElementById('submitChallengeButton')
-
-
 const registerCredentialSection = document.getElementById('registerCredential')
 const registerCredentialButton = document.getElementById('registerCredentialButton')
-
 const registrationSuccessSection = document.getElementById('registrationSuccess')
 const credentialCopy = document.getElementById('credentialCopy')
 const credentialIdCopy = document.getElementById('credentialIdCopy')
-
 const nextStepsSection = document.getElementById('nextSteps')
 const loadingBar = document.getElementsByClassName('progress')[0]
-
-
-// bind listeners
-// registerCredentialButton.onclick = onRegisterCredentialButtonPressed.bind(this)
-
-
-/// Handy groupings:
-
-const sections = [
-  enterConsentSection,
-  enterDerivedChallengeSection,
-  registerCredentialSection,
-  registrationSuccessSection,
-  nextStepsSection
-]
-
-// const otpInput = document.getElementById('otpInput')
-// const submitField = document.getElementById('submitField')
-// const submitPhoneNumberButton = document.getElementById('submitPhoneNumberButton')
-// const submitOTPButton = document.getElementById('submitOTPButton')
-// const saveDetailsButtonField = document.getElementById('saveDetailsButtonField')
-// const saveDetailsButton = document.getElementById('saveDetailsButton')
-// const loadingBar = document.getElementsByClassName('progress')[0]
-// const moreDetailsSection = document.getElementById('moreDetails')
-// const accountNicknameInput = document.getElementById('accountNicknameInput')
 
 
 /// Event Listeners
@@ -86,12 +56,22 @@ function consentTextAreaOnInput(value) {
     return
   }
 
+  if (!parsed.consentId || !parsed.scopes) {
+    this.setState({ createCredentialFormStatus: 'CONSENT_ENTERED_INVALID' })
+    return
+  }
+
+  if (!Array.isArray(parsed.scopes) || parsed.scopes.length === 0) {
+    this.setState({ createCredentialFormStatus: 'CONSENT_ENTERED_INVALID' })
+    return
+  }
+
+
   // TODO: Make sure required fields exist
   this.setState({ 
     createCredentialFormStatus: 'CONSENT_ENTERED_VALID',
     consent: parsed
   })
-
 }
 
 /**
@@ -99,11 +79,11 @@ function consentTextAreaOnInput(value) {
  * @description When submitConsent is pressed by the user, generate the challenge
  */
 function onSubmitConsentPressed() {
-  // TODO: actually generate the challenge!
+  const challenge = Utils.deriveChallengeFromConsent(state.consent)
 
   this.setState({
     createCredentialFormStatus: 'CHALLENGE_GENERATED',
-    challenge: 'abcd1234',
+    challenge,
   })
   
 }
