@@ -33,6 +33,8 @@ const registerCredentialButton = document.getElementById('registerCredentialButt
 const registrationSuccessSection = document.getElementById('registrationSuccess')
 const credentialCopy = document.getElementById('credentialCopy')
 const credentialIdCopy = document.getElementById('credentialIdCopy')
+const moreInfoSection = document.getElementById('moreInfo')
+const decodedClientDataJSON = document.getElementById('decodedClientDataJSON')
 const nextStepsSection = document.getElementById('nextSteps')
 const loadingBar = document.getElementsByClassName('progress')[0]
 
@@ -114,7 +116,7 @@ async function onRegisterCredentialButtonPressed() {
         userVerification: 'discouraged',
         // authenticatorAttachment: "cross-platform",
       },
-      challenge: Uint8Array.from(challenge, c => c.charCodeAt(0)),
+      challenge: Uint8Array.from(atob(challenge), c => c.charCodeAt(0)),
       pubKeyCredParams: [
         {
           alg: -7,
@@ -211,7 +213,8 @@ function onStateChanged(oldState, newState) {
       enterDerivedChallengeSection,
       registerCredentialSection,
       registrationSuccessSection,
-      // nextStepsSection
+      moreInfo,
+      nextStepsSection
     ].forEach(s => s.style.display = 'none')
   }
 
@@ -245,11 +248,12 @@ function onStateChanged(oldState, newState) {
   if (newState.createCredentialFormStatus === 'REGISTER_SUCCESS') {
     registrationSuccess.style.display = 'block'
     loadingBar.style.display = 'none'
-    nextSteps.style.display = 'block'
+    moreInfoSection.style.display = 'block'
+    nextStepsSection.style.display = 'block'
 
     credentialCopy.textContent = JSON.stringify(newState.credential, null, 2)
-
     credentialIdCopy.textContent = newState.credential.rawId
+    decodedClientDataJSON.textContent = atob(newState.credential.response.clientDataJSON)
   }
 
   if (newState.createCredentialFormStatus === 'REGISTER_ERROR') {

@@ -2,6 +2,9 @@ class Utils {
   static arrayBufferToBase64String(ab) {
     return btoa(String.fromCharCode.apply(null, new Uint8Array(ab)));
   }
+  static arrayBufferToString(ab) {
+    return String.fromCharCode.apply(null, new Uint8Array(ab));
+  }
 
   static stringToArrayBuffer(input) {
     // base64 to Buffer
@@ -38,8 +41,9 @@ class Utils {
     const encoder = new TextEncoder();
     const data = encoder.encode(challengeString);
     const hash = await crypto.subtle.digest('SHA-256', data);
-    const base64Hash = btoa(hash)
-
-    return base64Hash
+    const hashArray = Array.from(new Uint8Array(hash));                     // convert buffer to byte array
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+    return btoa(hashHex);
+    // return this.arrayBufferToBase64String(hash)
   }
 }
