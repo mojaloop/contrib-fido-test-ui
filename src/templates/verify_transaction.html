@@ -22,35 +22,20 @@
 
     <section id="enterChallenge">
       <div class="container">
-        <p>Step 1: Enter the `challenge` field from the `POST /thirdpartyReququests/authorizations` request from the DFSP</p>
         <div class="field">
-          <label class="label">Copy and paste in the Consent object you received in `POST /consents`</label>
+          <label class="label">Enter the `challenge` field from the `POST /thirdpartyRequests/authorizations` request
+            from the DFSP</label>
           <div class="control">
-            <textarea id="consentTextArea" class="textarea" placeholder="{...}"
-              oninput="consentTextAreaOnInput(this.value)" rows="10">
-            </textarea>
-          </div>
-          <p style="display: none" id="consentInvalidHelp" class="help is-danger">This Consent is invalid</p>
-        </div>
-
-        <div id="submitConsentField" class="field">
-          <div class="control pt-2">
-            <button style="display: none" id="submitConsentButton" class="button is-link"
-              onclick="onSubmitConsentPressed()">
-              Submit
-            </button>
+            <input id="challengeInput" class="input" type="text" placeholder="challenge"
+              oninput="challengeOnInput(this.value)">
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- <section id="enterDerivedChallenge">
-      <div class="container">
-        <p>Step 2: Confirm your generated challenge.</p>
         <div class="field">
-          <label class="label">Your generated challenge is:</label>
+          <label class="label">Enter the id of the credential you previously registered</label>
           <div class="control">
-            <input id="generatedChallengeInput" class="input" type="text" placeholder="asdasda" disabled>
+            <input id="credentialIdInput" class="input" type="text" placeholder="credentialId"
+              oninput="credentialIdOnInput(this.value)">
           </div>
         </div>
 
@@ -58,16 +43,33 @@
           <div class="control pt-2">
             <button style="display: block" id="submitChallengeButton" class="button is-link"
               onclick="onSubmitChallengePressed()">
-              OK
+              Submit
             </button>
           </div>
         </div>
       </div>
-    </section> -->
+    </section>
+
+    <section id="assertionResult">
+      <div class="container">
+        <div class="field">
+          <label class="label">Copy and paste the result into the `PUT /thirdpartyRequests/authorizations payload</label>
+          <div class="content">
+            <pre>
+{
+  ...
+}
+            </pre>
+          </div> 
+        </div>
+      </div>
+    </section>
+
 
   </div>
   {{> foot}}
   {{> firebase_body}}
-  <script src="./create_credential.js"></script>
+  <script src="./verify_transaction.js"></script>
 </body>
+
 </html>

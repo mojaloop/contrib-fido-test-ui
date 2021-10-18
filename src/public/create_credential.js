@@ -21,6 +21,9 @@ const registerCredentialSection = document.getElementById('registerCredential')
 const registerCredentialButton = document.getElementById('registerCredentialButton')
 
 const registrationSuccessSection = document.getElementById('registrationSuccess')
+const credentialCopy = document.getElementById('credentialCopy')
+const credentialIdCopy = document.getElementById('credentialIdCopy')
+
 const nextStepsSection = document.getElementById('nextSteps')
 const loadingBar = document.getElementsByClassName('progress')[0]
 
@@ -114,7 +117,8 @@ async function onRegisterCredentialButtonPressed() {
     publicKey: {
       attestation: "direct",
       authenticatorSelection: {
-        authenticatorAttachment: "cross-platform",
+        userVerification: 'discouraged',
+        // authenticatorAttachment: "cross-platform",
       },
       challenge: Uint8Array.from(challenge, c => c.charCodeAt(0)),
       pubKeyCredParams: [
@@ -122,10 +126,10 @@ async function onRegisterCredentialButtonPressed() {
           alg: -7,
           type: "public-key"
         },
-        {
-          alg: -257,
-          type: "public-key"
-        }
+        // {
+        //   alg: -257,
+        //   type: "public-key"
+        // }
       ],
       rp: {
         id: rpId,
@@ -135,8 +139,8 @@ async function onRegisterCredentialButtonPressed() {
       // TODO: what do we do about the user?
       user: {
         id: Uint8Array.from("UZSL85T9AFC", c => c.charCodeAt(0)),
-        name: "lee@webauthn.guide",
-        displayName: "Lee",
+        name: "test@example.com",
+        displayName: "Moja",
       },
     }
   }
@@ -144,8 +148,21 @@ async function onRegisterCredentialButtonPressed() {
   this.setState({ createCredentialFormStatus: 'REGISTER_LOADING'})
   return navigator.credentials.create(options)
   .then(result => {
-    console.log('result is', result)
-    this.setState({ createCredentialFormStatus: 'REGISTER_SUCCESS' })
+    // console.log('result is', result)
+
+    const credential = {
+      id: result.id,
+      rawId: Utils.arrayBufferToString(result.rawId,
+      response: {
+        attestationObject: Utils.arrayBufferToString(result.response.attestationObject),
+        clientDataJSON: Utils.arrayBufferToString(result.response.clientDataJSON),
+      },
+      type: result.type
+    }
+    this.setState({ 
+      createCredentialFormStatus: 'REGISTER_SUCCESS',
+      credential: result
+    })
   })
   .catch(err => {
     console.log(err)
@@ -190,7 +207,7 @@ function setState(someFields) {
 
 
 function onStateChanged(oldState, newState) {
-  console.log('onStateChanged', oldState, newState)
+  // console.log('onStateChanged', oldState, newState)
 
   if (newState.createCredentialFormStatus === 'EMPTY') {
     [
@@ -231,6 +248,10 @@ function onStateChanged(oldState, newState) {
     registrationSuccess.style.display = 'block'
     loadingBar.style.display = 'none'
     nextSteps.style.display = 'block'
+
+    credentialCopy.textContent = JSON.stringify(newState.credential)
+
+    credentialIdCopy.textContent = newState.credential.id
   }
 
   if (newState.createCredentialFormStatus === 'REGISTER_ERROR') {
