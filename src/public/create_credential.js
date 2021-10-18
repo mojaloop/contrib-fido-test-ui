@@ -2,7 +2,21 @@
 const state = {}
 window.onerror = function (message, url, line) {
   bulmaToast.toast({ message, type: 'is-danger' })
+}
 
+
+/// example data
+const examplePostConsentPayload = {
+  consentId: '5a25c45c-0ac7-4d27-9363-b1d78fb108b5',
+  consentRequestId: '2db620c5-205e-46aa-a33a-56b9d226f84f',
+  scopes: [
+    {
+      accountId: '54c8847e-98e9-4a6e-9331-c0ff39509e8a',
+      actions: [
+        'ACCOUNTS_TRANSFER'
+      ]
+    }
+  ]
 }
 
 /// UI Elements
@@ -145,23 +159,26 @@ async function onRegisterCredentialButtonPressed() {
     }
   }
 
+  console.log('calling navigator.credentials.create with options:')
+  console.log(options)
+
   this.setState({ createCredentialFormStatus: 'REGISTER_LOADING'})
   return navigator.credentials.create(options)
   .then(result => {
-    // console.log('result is', result)
+    console.log('result is', result)
 
     const credential = {
       id: result.id,
-      rawId: Utils.arrayBufferToString(result.rawId,
+      rawId: Utils.arrayBufferToBase64String(result.rawId),
       response: {
-        attestationObject: Utils.arrayBufferToString(result.response.attestationObject),
-        clientDataJSON: Utils.arrayBufferToString(result.response.clientDataJSON),
+        attestationObject: Utils.arrayBufferToBase64String(result.response.attestationObject),
+        clientDataJSON: Utils.arrayBufferToBase64String(result.response.clientDataJSON),
       },
       type: result.type
     }
     this.setState({ 
       createCredentialFormStatus: 'REGISTER_SUCCESS',
-      credential: result
+      credential
     })
   })
   .catch(err => {
@@ -230,6 +247,7 @@ function onStateChanged(oldState, newState) {
 
   if (oldState.createCredentialFormStatus === 'CONSENT_ENTERED_VALID' 
     && newState.createCredentialFormStatus === 'CHALLENGE_GENERATED') {
+    submitConsentButton.style.display = 'none'
     enterDerivedChallenge.style.display = 'block'
     generatedChallengeInput.value = newState.challenge
   }
@@ -249,7 +267,7 @@ function onStateChanged(oldState, newState) {
     loadingBar.style.display = 'none'
     nextSteps.style.display = 'block'
 
-    credentialCopy.textContent = JSON.stringify(newState.credential)
+    credentialCopy.textContent = JSON.stringify(newState.credential, null, 2)
 
     credentialIdCopy.textContent = newState.credential.id
   }
@@ -263,4 +281,7 @@ function onStateChanged(oldState, newState) {
 setState(defaultState)
 
 
+
+// Set example data:
+consentTextArea.value = JSON.stringify(examplePostConsentPayload, null, 2)
 

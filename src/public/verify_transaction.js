@@ -59,10 +59,8 @@ async function onSubmitChallengePressed() {
       userVerification: 'discouraged',
       challenge: Uint8Array.from(state.challenge, c => c.charCodeAt(0)),
       allowCredentials: [{
-        // id: Uint8Array.from('UZSL85T9AFC', c => c.charCodeAt(0)),
-        id: Uint8Array.from(state.credentialId, c => c.charCodeAt(0)),
+        id: Utils.stringToArrayBuffer(state.credentialId),
         type: 'public-key',
-        // transports: ['usb', 'ble', 'nfc'],
       }],
       timeout: 60000,
     }
@@ -146,7 +144,7 @@ function onStateChanged(oldState, newState) {
   }
 
   if (newState.formStatus === 'VERIFY_SUCCESS') {
-    submitChallengeButton.style.display = 'block'
+    submitChallengeButton.style.display = 'none'
     assertionResult.style.display = 'block'
     loadingBar.style.display = 'none'
   }

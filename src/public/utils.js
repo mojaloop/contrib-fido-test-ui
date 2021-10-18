@@ -1,14 +1,14 @@
 class Utils {
-  static arrayBufferToString(ab) {
-    return String.fromCharCode.apply(null, new Uint8Array(ab));
+  static arrayBufferToBase64String(ab) {
+    return btoa(String.fromCharCode.apply(null, new Uint8Array(ab)));
   }
 
   static stringToArrayBuffer(input) {
     // base64url to base64
-    input = input.replace(/-/g, '+').replace(/_/g, '/')
+    // input = input.replace(/-/g, '+').replace(/_/g, '/')
     // base64 to Buffer
-    const buf = Buffer.from(input, 'base64')
-    const bufUint8Array = new Uint8Array(buf)
+    const binaryStr = atob(input)
+    const bufUint8Array = Uint8Array.from(binaryStr, c => c.charCodeAt(0))
     const ab = bufUint8Array.buffer
 
     return ab
