@@ -12,7 +12,34 @@ class Utils {
     return ab
   }
 
-  static deriveChallengeFromConsent(input) {
-    return '12345'
+  static async deriveChallengeFromConsent(input) {
+    const rawChallenge = {
+      consentId: input.consentId,
+      scopes: input.scopes
+    }
+
+    // lazy json canonicalize - the only thing to worry about is the order of scopes objects
+
+    /*
+      https://datatracker.ietf.org/doc/html/rfc8785#section-3.2.3
+
+      *  JSON object properties MUST be sorted recursively, which means
+         that JSON child Objects MUST have their properties sorted as well.
+
+      *  JSON array data MUST also be scanned for the presence of JSON
+         objects (if an object is found, then its properties MUST be
+         sorted), but array element order MUST NOT be changed.
+    */
+    rawChallenge.scopes = rawChallenge.scopes.map(s => ({
+      accountId: s.accountId,
+      actions: s.actions
+    }))
+    const challengeString = JSON.stringify(rawChallenge)
+    const encoder = new TextEncoder();
+    const data = encoder.encode(challengeString);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    const base64Hash = btoa(hash)
+
+    return base64Hash
   }
 }

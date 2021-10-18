@@ -8,6 +8,7 @@ window.onerror = function (message, url, line) {
 /// UI Elements
 const enterChallengeSection = document.getElementById('enterChallenge')
 const assertionResult = document.getElementById('assertionResult')
+const assertionCopy = document.getElementById('assertionCopy')
 const loadingBar = document.getElementsByClassName('progress')[0]
 
 
@@ -72,9 +73,21 @@ async function onSubmitChallengePressed() {
   return navigator.credentials.get(options)
     .then(result => {
       console.log('result', result)
+
+      const assertionResult = {
+        id: result.id,
+        rawId: Utils.arrayBufferToBase64String(result.rawId),
+        response: {
+          authenticatorData: Utils.arrayBufferToBase64String(result.response.authenticatorData),
+          clientDataJSON: Utils.arrayBufferToBase64String(result.response.clientDataJSON),
+          signature: Utils.arrayBufferToBase64String(result.response.signature),
+        },
+        type: result.type
+      }
+
       this.setState({
         formStatus: 'VERIFY_SUCCESS',
-        assertionResult: result
+        assertionResult
       })
     }).catch(err => {
       this.setState({
@@ -147,6 +160,8 @@ function onStateChanged(oldState, newState) {
     submitChallengeButton.style.display = 'none'
     assertionResult.style.display = 'block'
     loadingBar.style.display = 'none'
+
+    assertionCopy.textContent = JSON.stringify(newState.assertionResult, null, 2)
   }
 
   

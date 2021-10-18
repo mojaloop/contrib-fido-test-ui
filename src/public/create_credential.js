@@ -78,8 +78,8 @@ function consentTextAreaOnInput(value) {
  * @function onSubmitConsentPressed
  * @description When submitConsent is pressed by the user, generate the challenge
  */
-function onSubmitConsentPressed() {
-  const challenge = Utils.deriveChallengeFromConsent(state.consent)
+async function onSubmitConsentPressed() {
+  const challenge = await Utils.deriveChallengeFromConsent(state.consent)
 
   this.setState({
     createCredentialFormStatus: 'CHALLENGE_GENERATED',
@@ -249,7 +249,7 @@ function onStateChanged(oldState, newState) {
 
     credentialCopy.textContent = JSON.stringify(newState.credential, null, 2)
 
-    credentialIdCopy.textContent = newState.credential.id
+    credentialIdCopy.textContent = newState.credential.rawId
   }
 
   if (newState.createCredentialFormStatus === 'REGISTER_ERROR') {
