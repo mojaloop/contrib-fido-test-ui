@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+{{> head}}
+
+<body>
+  {{> firebase_body}}
+  <section class="hero is-medium">
+    <div class="hero-body">
+      <img style="width: 200px" src="{{baseUrl}}/mojaloop_logo.png" />
+      <p class="subtitle">
+        Welcome to the Mojaloop 3PPI Credential Simulator
+      </p>
+    </div>
+  </section>
+  
+  <div class="container p-6">
+    <div class="columns">
+      <div class="column">
+        <a class="box" href="{{baseUrl}}/create_credential">
+          <h3 class="title is-6">Create a Test Credential</h3>
+          <h4 class="subtitle is-6">
+            Create a test credential from my authenticator to complete the account linking process.
+          </h4>
+        </a>
+      </div>
+      <div class="column">
+        <a class="box" href="{{baseUrl}}/verify_transaction">
+          <h3 class="title is-6">Verify a transaction</h3>
+          <h4 class="subtitle is-6">
+            Verify a transansaction using a credential I previously generated.
+          </h4>
+        </a>
+      </div>
+      <!-- <div class="column">
+        <a class="box" href="{{baseUrl}}/demo_account">
+          <h3 class="title is-6">Register example users</h3>
+          <h4 class="subtitle is-6">
+            Create demo accounts with {{readableParticipantName}} to send and receive payments from and to.
+            </h3>
+        </a>
+      </div> -->
+      <div class="column">
+  
+      </div>
+    </div>
+  </div>
+  {{> foot}}
+</body>
+
+</html>

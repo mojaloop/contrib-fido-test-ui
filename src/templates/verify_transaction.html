@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+{{> head}}
+
+<body class="main">
+  {{> navbar}}
+
+  <div id="wrapper" class="px-4">
+    <div style="min-height: 14px;">
+      <progress style="display: none" class="progress is-small" max="100">20%</progress>
+    </div>
+    <section class="section">
+      <div class="container">
+        <h1 class="title is-3">
+          Verify Transaction
+        </h1>
+        <h1 class="subtitle is-3">
+          Using a credential you created in the last step, verify a transaction
+        </h1>
+      </div>
+    </section>
+
+    <section id="enterChallenge">
+      <div class="container">
+        <p>Step 1: Enter the `challenge` field from the `POST /thirdpartyReququests/authorizations` request from the DFSP</p>
+        <div class="field">
+          <label class="label">Copy and paste in the Consent object you received in `POST /consents`</label>
+          <div class="control">
+            <textarea id="consentTextArea" class="textarea" placeholder="{...}"
+              oninput="consentTextAreaOnInput(this.value)" rows="10">
+            </textarea>
+          </div>
+          <p style="display: none" id="consentInvalidHelp" class="help is-danger">This Consent is invalid</p>
+        </div>
+
+        <div id="submitConsentField" class="field">
+          <div class="control pt-2">
+            <button style="display: none" id="submitConsentButton" class="button is-link"
+              onclick="onSubmitConsentPressed()">
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- <section id="enterDerivedChallenge">
+      <div class="container">
+        <p>Step 2: Confirm your generated challenge.</p>
+        <div class="field">
+          <label class="label">Your generated challenge is:</label>
+          <div class="control">
+            <input id="generatedChallengeInput" class="input" type="text" placeholder="asdasda" disabled>
+          </div>
+        </div>
+
+        <div id="submitChallengeField" class="field">
+          <div class="control pt-2">
+            <button style="display: block" id="submitChallengeButton" class="button is-link"
+              onclick="onSubmitChallengePressed()">
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+  </div>
+  {{> foot}}
+  {{> firebase_body}}
+  <script src="./create_credential.js"></script>
+</body>
+</html>

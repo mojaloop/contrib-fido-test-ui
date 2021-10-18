@@ -1,0 +1,21 @@
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-firestore.js"></script>
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "{{firebaseConfig.apiKey}}",
+    authDomain: "{{firebaseConfig.authDomain}}",
+    projectId: "{{firebaseConfig.projectId}}",
+    storageBucket: "{{firebaseConfig.storageBucket}}",
+    messagingSenderId: "{{firebaseConfig.messagingSenderId}}",
+    appId: "{{firebaseConfig.appId}}",
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.firestore();
+
+</script>
+<script src="{{baseUrl}}/model.js"></script>
+<script src="{{baseUrl}}/auth.js"></script>

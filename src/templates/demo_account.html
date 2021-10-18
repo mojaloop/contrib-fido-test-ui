@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+{{> head}}
+
+<body class="main">
+  {{> navbar}}
+
+  <div id="wrapper" class="px-4">
+    <div style="min-height: 14px;">
+      <progress style="display: none" class="progress is-small" max="100">20%</progress>
+    </div>
+    <section class="section">
+      <div class="container">
+        <h1 class="title is-3">
+          Sign Up for a DFSP Demo Account
+        </h1>
+        <h1 class="subtitle is-3">
+          Or log in again if you've already created your account.
+        </h1>
+      </div>
+    </section>
+
+    <section id="loginSection">
+      <div class="container">
+
+        <fieldset id='phoneNumberFieldSet'>
+          <div style="display: none" id='phoneNumberField' class="field">
+            <label class="label">Phone Number (Intl Format)</label>
+            <div class="control">
+              <input id="phoneNumberInput" class="input" type="tel" placeholder="+61414414414">
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset id='verificationCodeFieldSet'>
+          <div style="display: none" id="verificationCodeField" class="field">
+            <label class="label">Verification Code</label>
+            <div class="control">
+              <input id="otpInput" class="input" type="text" placeholder="Enter the code you received.">
+            </div>
+          </div>
+        </fieldset>
+
+        <div id="submitPhoneNumberField" class="field">
+          <div class="control pt-2">
+            <button style="display: none"  id="submitPhoneNumberButton" class="button is-link" onclick="onSignInPressed()">
+              Submit
+            </button>
+          </div>
+        </div>
+
+        <div id="submitOTPField" class="field">
+          <div class="control pt-2">
+            <button style="display: none" id="submitOTPButton" class="button is-link" onclick="onVerifyCodePressed()">
+              Submit OTP
+            </button>
+          </div>
+        </div>
+    </section>
+
+    <section id="moreDetails" class="section is-medium" style="display: none">
+      <div class="container">
+        <h2 class="title is-5">Here are the details of your account:</h2>
+        <div class="card p-2">
+          <div class="column">
+
+            <label class="label">Mojaloop Account Identifier</label>
+            <div class="control">
+              <input id="accountIdentifierInput" class="input" type="text" placeholder="Disabled input" disabled>
+            </div>
+
+            <label class="label">Account Nickname</label>
+            <div class="control">
+              <input 
+                id="accountNicknameInput" 
+                oninput="onAccountDetailsFormChanged()" 
+                class="input" 
+                type="text"
+                placeholder="Enter a nickname for your account">
+            </div>
+
+            <div id="saveDetailsButtonField" class="field">
+              <div class="control pt-2">
+                <button id="saveDetailsButton" class="button is-link" onclick="onSaveDetailsPressed()">
+                  Save
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="nextSteps" class="section is-medium" style="display: none">
+      <div class="container">
+        <h3 class="subtitle is-5">Here's what you can do next:</h3>
+        <div class="columns">
+          <div class="column">
+            <a class="box" href="/demo_account">
+              <h3 class="title is-6">Register example users</h3>
+              <h4 class="subtitle is-6">
+                Create demo accounts with {{readableParticipantName}} to send and receive payments from and to.
+                </h3>
+            </a>
+          </div>
+          <div class="column">
+
+          </div>
+        </div>
+    </section>
+  </div>
+
+  {{> foot}}
+
+  {{> firebase_body}}
+  <script src="./demo_account.js"></script>
+</body>
+
+</html>

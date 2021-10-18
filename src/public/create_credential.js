@@ -1,0 +1,245 @@
+/// Globals
+const state = {}
+window.onerror = function (message, url, line) {
+  bulmaToast.toast({ message, type: 'is-danger' })
+
+}
+
+/// UI Elements
+const enterConsentSection = document.getElementById('enterConsent')
+const consentTextArea = document.getElementById('consentTextArea')
+const submitConsentButton = document.getElementById('submitConsentButton')
+const consentInvalidHelp = document.getElementById('consentInvalidHelp')
+
+const enterDerivedChallengeSection = document.getElementById('enterDerivedChallenge')
+const submitChallengeField = document.getElementById('submitChallengeField')
+const generatedChallengeInput = document.getElementById('generatedChallengeInput')
+const submitChallengeButton = document.getElementById('submitChallengeButton')
+
+
+const registerCredentialSection = document.getElementById('registerCredential')
+const registerCredentialButton = document.getElementById('registerCredentialButton')
+
+const registrationSuccessSection = document.getElementById('registrationSuccess')
+const nextStepsSection = document.getElementById('nextSteps')
+const loadingBar = document.getElementsByClassName('progress')[0]
+
+
+// bind listeners
+// registerCredentialButton.onclick = onRegisterCredentialButtonPressed.bind(this)
+
+
+/// Handy groupings:
+
+const sections = [
+  enterConsentSection,
+  enterDerivedChallengeSection,
+  registerCredentialSection,
+  registrationSuccessSection,
+  nextStepsSection
+]
+
+// const otpInput = document.getElementById('otpInput')
+// const submitField = document.getElementById('submitField')
+// const submitPhoneNumberButton = document.getElementById('submitPhoneNumberButton')
+// const submitOTPButton = document.getElementById('submitOTPButton')
+// const saveDetailsButtonField = document.getElementById('saveDetailsButtonField')
+// const saveDetailsButton = document.getElementById('saveDetailsButton')
+// const loadingBar = document.getElementsByClassName('progress')[0]
+// const moreDetailsSection = document.getElementById('moreDetails')
+// const accountNicknameInput = document.getElementById('accountNicknameInput')
+
+
+/// Event Listeners
+
+function consentTextAreaOnInput(value) {  
+  // ignore first field fields of input
+  if (value.length < 4) {
+    this.setState({ createCredentialFormStatus: 'EMPTY' })
+
+    return
+  }
+
+  // validate the json
+  let parsed 
+  try {
+    parsed = JSON.parse(value)
+  } catch (err) {
+    this.setState({ createCredentialFormStatus: 'CONSENT_ENTERED_INVALID'})
+    return
+  }
+
+  // TODO: Make sure required fields exist
+  this.setState({ 
+    createCredentialFormStatus: 'CONSENT_ENTERED_VALID',
+    consent: parsed
+  })
+
+}
+
+/**
+ * @function onSubmitConsentPressed
+ * @description When submitConsent is pressed by the user, generate the challenge
+ */
+function onSubmitConsentPressed() {
+  // TODO: actually generate the challenge!
+
+  this.setState({
+    createCredentialFormStatus: 'CHALLENGE_GENERATED',
+    challenge: 'abcd1234',
+  })
+  
+}
+
+/**
+ * @function onSubmitChallengePressed()
+ * @description After the user verified the challenge allow them to accept it
+ */
+function onSubmitChallengePressed() {
+  this.setState({
+    createCredentialFormStatus: 'CHALLENGE_ACCEPTED'
+  })
+}
+
+/**
+ * @function onRegisterCredentialButtonPressed()
+ * @description Call navigator.credentials.create
+ */
+async function onRegisterCredentialButtonPressed() {
+  const challenge = state.challenge
+  const rpId = window.location.hostname
+
+  // TODO: tweak these options to work with Auth Service
+  const options = {
+    publicKey: {
+      attestation: "direct",
+      authenticatorSelection: {
+        authenticatorAttachment: "cross-platform",
+      },
+      challenge: Uint8Array.from(challenge, c => c.charCodeAt(0)),
+      pubKeyCredParams: [
+        {
+          alg: -7,
+          type: "public-key"
+        },
+        {
+          alg: -257,
+          type: "public-key"
+        }
+      ],
+      rp: {
+        id: rpId,
+        name: "Mojaloop 3PPI"
+      },
+      timeout: 90000,
+      // TODO: what do we do about the user?
+      user: {
+        id: Uint8Array.from("UZSL85T9AFC", c => c.charCodeAt(0)),
+        name: "lee@webauthn.guide",
+        displayName: "Lee",
+      },
+    }
+  }
+
+  this.setState({ createCredentialFormStatus: 'REGISTER_LOADING'})
+  return navigator.credentials.create(options)
+  .then(result => {
+    console.log('result is', result)
+    this.setState({ createCredentialFormStatus: 'REGISTER_SUCCESS' })
+  })
+  .catch(err => {
+    console.log(err)
+    this.setState({ createCredentialFormStatus: 'REGISTER_ERROR' })
+    onRegisterCredentialFailed(err)
+  })
+}
+
+function onRegisterCredentialFailed(error) {  
+  bulmaToast.toast({
+    message: `<h1>Failed to Register Credential with error: </h1></br><p>${error}</p>`,
+    type: 'is-danger',
+    duration: 2000
+  })
+
+  setTimeout(() => this.setState({ createCredentialFormStatus: 'CHALLENGE_ACCEPTED'}), 2000)
+}
+
+
+/// State Management
+const defaultState = {
+  /// Where the create credential form is up to depending on the user's input
+  /// EMPTY | CONSENT_ENTERED_VALID | CONSENT_ENTERED_INVALID | CHALLENGE_GENERATED | CHALLENGE_ACCEPTED | REGISTER_LOADING | REGISTER_ERROR | REGISTER_SUCCESS
+  createCredentialFormStatus: 'EMPTY',
+
+  /// The consent object entered by the user
+  consent: undefined,
+
+  /// The challenge generated by this site from the consent
+  generatedChallenge: undefined,
+
+  /// The credential returned by the webauthn api
+  credential: undefined
+}
+
+function setState(someFields) {
+  const oldState = JSON.parse(JSON.stringify(state))
+  const newState = Object.assign(state, someFields)
+
+  onStateChanged(oldState, newState)
+}
+
+
+function onStateChanged(oldState, newState) {
+  console.log('onStateChanged', oldState, newState)
+
+  if (newState.createCredentialFormStatus === 'EMPTY') {
+    [
+      enterDerivedChallengeSection,
+      registerCredentialSection,
+      registrationSuccessSection,
+      // nextStepsSection
+    ].forEach(s => s.style.display = 'none')
+  }
+
+  if (newState.createCredentialFormStatus === 'CONSENT_ENTERED_INVALID') {
+    consentInvalidHelp.style.display = 'block'
+    submitConsentButton.style.display = 'none'
+  }
+
+  if (newState.createCredentialFormStatus === 'CONSENT_ENTERED_VALID') {
+    consentInvalidHelp.style.display = 'none'
+    submitConsentButton.style.display = 'block'
+  }
+
+  if (oldState.createCredentialFormStatus === 'CONSENT_ENTERED_VALID' 
+    && newState.createCredentialFormStatus === 'CHALLENGE_GENERATED') {
+    enterDerivedChallenge.style.display = 'block'
+    generatedChallengeInput.value = newState.challenge
+  }
+
+  if (newState.createCredentialFormStatus === 'CHALLENGE_ACCEPTED') {
+    registerCredential.style.display = 'block'
+    registerCredentialButton.style.display = 'block'
+  }
+
+  if (newState.createCredentialFormStatus === 'REGISTER_LOADING') {
+    registerCredentialButton.style.display = 'none'
+    loadingBar.style.display = 'block'
+  }
+
+  if (newState.createCredentialFormStatus === 'REGISTER_SUCCESS') {
+    registrationSuccess.style.display = 'block'
+    loadingBar.style.display = 'none'
+    nextSteps.style.display = 'block'
+  }
+
+  if (newState.createCredentialFormStatus === 'REGISTER_ERROR') {
+    loadingBar.style.display = 'none'
+  }
+}
+
+// call setState with default values on first load
+setState(defaultState)
+
+
+
