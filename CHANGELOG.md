@@ -1,4 +1,11 @@
 # Changelog: [jgeewax/pisp-demo-server](https://github.com/jgeewax/pisp-demo-server)
+### [0.1.2](https://github.com/mojaloop/contrib-fido-test-ui/compare/v0.1.1...v0.1.2) (2021-10-19)
+
+
+### Bug Fixes
+
+* **ci:** docker image name ([a7a74b9](https://github.com/mojaloop/contrib-fido-test-ui/commit/a7a74b9cb4f5db118fdb9effaf6f2c134afcdcf4))
+
 ### 0.1.1 (2021-10-19)
 
 
