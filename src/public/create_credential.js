@@ -3,20 +3,24 @@ const state = {}
 window.onerror = function (message, url, line) {
   bulmaToast.toast({ message, type: 'is-danger' })
 }
-
+const cookieState = new CookieState()
 
 /// example data
 const examplePostConsentPayload = {
-  consentId: '5a25c45c-0ac7-4d27-9363-b1d78fb108b5',
-  consentRequestId: '2db620c5-205e-46aa-a33a-56b9d226f84f',
-  scopes: [
-    {
-      accountId: '54c8847e-98e9-4a6e-9331-c0ff39509e8a',
-      actions: [
-        'ACCOUNTS_TRANSFER'
-      ]
-    }
-  ]
+  consentId: "46876aac-5db8-4353-bb3c-a6a905843ce7",
+  scopes: [{ "accountId": "dfspa.username.5678", "actions": ["accounts.transfer"] }],
+
+
+  // consentId: '5a25c45c-0ac7-4d27-9363-b1d78fb108b5',
+  // consentRequestId: '2db620c5-205e-46aa-a33a-56b9d226f84f',
+  // scopes: [
+  //   {
+  //     accountId: '54c8847e-98e9-4a6e-9331-c0ff39509e8a',
+  //     actions: [
+  //       'ACCOUNTS_TRANSFER'
+  //     ]
+  //   }
+  // ]
 }
 
 /// UI Elements
@@ -35,6 +39,7 @@ const credentialCopy = document.getElementById('credentialCopy')
 const credentialIdCopy = document.getElementById('credentialIdCopy')
 const moreInfoSection = document.getElementById('moreInfo')
 const decodedClientDataJSON = document.getElementById('decodedClientDataJSON')
+const decodedCredentialIdCopy = document.getElementById('decodedCredentialIdCopy')
 const nextStepsSection = document.getElementById('nextSteps')
 const loadingBar = document.getElementsByClassName('progress')[0]
 
@@ -158,9 +163,29 @@ async function onRegisterCredentialButtonPressed() {
       },
       type: result.type
     }
+
+    const decodedAttestationObject = window.cbor.decodeFirstSync(result.response.attestationObject)
+    const { authData } = decodedAttestationObject;
+    const dataView = new DataView(
+      new ArrayBuffer(2));
+    const idLenBytes = authData.slice(53, 55);
+    idLenBytes.forEach(
+      (value, index) => dataView.setUint8(
+        index, value));
+    const credentialIdLength = dataView.getUint16();
+
+    // get the credential ID
+    const decodedCredentialId = authData.slice(
+      55, 55 + credentialIdLength);
+
+    // save the last credential to local state
+    cookieState.set(credential.rawId)
+
     this.setState({ 
       createCredentialFormStatus: 'REGISTER_SUCCESS',
-      credential
+      credential,
+      decodedAttestationObject,
+      decodedCredentialId,
     })
   })
   .catch(err => {
@@ -194,7 +219,13 @@ const defaultState = {
   generatedChallenge: undefined,
 
   /// The credential returned by the webauthn api
-  credential: undefined
+  credential: undefined,
+
+  // The decoded attestation object
+  decodedAttestationObject: undefined,
+
+  // The credential id decoded from the registration result:
+  decodedCredentialId: undefined
 }
 
 function setState(someFields) {
@@ -254,6 +285,7 @@ function onStateChanged(oldState, newState) {
     credentialCopy.textContent = JSON.stringify(newState.credential, null, 2)
     credentialIdCopy.textContent = newState.credential.rawId
     decodedClientDataJSON.textContent = atob(newState.credential.response.clientDataJSON)
+    decodedCredentialIdCopy.textContent = Utils.arrayBufferToBase64String(newState.decodedCredentialId)
   }
 
   if (newState.createCredentialFormStatus === 'REGISTER_ERROR') {

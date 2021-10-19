@@ -4,9 +4,13 @@ window.onerror = function (message, url, line) {
   bulmaToast.toast({ message, type: 'is-danger' })
 
 }
+const cookieState = new CookieState()
+const lastCredentialId = cookieState.get()
+
 
 /// UI Elements
 const enterChallengeSection = document.getElementById('enterChallenge')
+const credentialIdInput = document.getElementById('credentialIdInput')
 const assertionResult = document.getElementById('assertionResult')
 const assertionCopy = document.getElementById('assertionCopy')
 const loadingBar = document.getElementsByClassName('progress')[0]
@@ -165,6 +169,11 @@ function onStateChanged(oldState, newState) {
   }
 
   
+}
+
+
+if (lastCredentialId) {
+  credentialIdInput.value = lastCredentialId
 }
 
 // call setState with default values on first load
