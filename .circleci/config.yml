@@ -356,13 +356,13 @@ workflows:
       #       tags:
       #         only: /.*/
 
-      - vulnerability-check:
-          context: org-global
-          requires:
-            - setup
-          filters:
-            tags:
-              only: /.*/
+      # - vulnerability-check:
+      #     context: org-global
+      #     requires:
+      #       - setup
+      #     filters:
+      #       tags:
+      #         only: /.*/
 
       # - audit-licenses:
       #     context: org-global
@@ -381,9 +381,11 @@ workflows:
       - release:
           context: org-global
           requires:
+            - setup
+            - build-local
             # - test-unit
             # - test-integration
-            - vulnerability-check
+            # - vulnerability-check
           filters:
             branches:
               only:
