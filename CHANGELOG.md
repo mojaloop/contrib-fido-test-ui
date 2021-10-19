@@ -1,4 +1,11 @@
 # Changelog: [jgeewax/pisp-demo-server](https://github.com/jgeewax/pisp-demo-server)
+### [0.1.3](https://github.com/mojaloop/contrib-fido-test-ui/compare/v0.1.2...v0.1.3) (2021-10-19)
+
+
+### Bug Fixes
+
+* **basePath:** remove need for trailing slash ([f803678](https://github.com/mojaloop/contrib-fido-test-ui/commit/f803678f0a83ec11fa81c02242c8bc25cf0d8b29))
+
 ### [0.1.2](https://github.com/mojaloop/contrib-fido-test-ui/compare/v0.1.1...v0.1.2) (2021-10-19)
 
 
