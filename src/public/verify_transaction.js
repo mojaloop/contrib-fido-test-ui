@@ -174,6 +174,7 @@ function onStateChanged(oldState, newState) {
 
 if (lastCredentialId) {
   credentialIdInput.value = lastCredentialId
+  defaultState.credentialId = lastCredentialId
 }
 
 // call setState with default values on first load

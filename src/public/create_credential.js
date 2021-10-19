@@ -298,6 +298,6 @@ setState(defaultState)
 
 
 
-// Set example data:
-consentTextArea.value = JSON.stringify(examplePostConsentPayload, null, 2)
+// Uncomment to set example data:
+// consentTextArea.value = JSON.stringify(examplePostConsentPayload, null, 2)
 
