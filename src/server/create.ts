@@ -87,9 +87,9 @@ export default async function create(
   });
 
   // Specific templated routes
-  server.route([{
+  let indexRoute = {
     method: 'GET',
-    path: `${config.get('basePath')}/`,
+    path: `${config.get('basePath')}`,
     handler: {
       view: {
         template: 'index',
@@ -98,20 +98,23 @@ export default async function create(
         }
       }
     }
-  },
-  // Example only. TODO: remove
-  {
-    method: 'GET',
-    path: `${config.get('basePath')}/demo_account`,
-    handler: {
-      view: {
-        template: 'demo_account',
-        context: {
-          ...globalContext
+  }
+  if (config.get('basePath') === '') {
+    indexRoute = {
+      method: 'GET',
+      path: `/`,
+      handler: {
+        view: {
+          template: 'index',
+          context: {
+            ...globalContext
+          }
         }
       }
     }
-  },
+  }
+  server.route([
+    indexRoute,
   {
     method: 'GET',
     path: `${config.get('basePath')}/create_credential`,
