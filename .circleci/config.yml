@@ -340,21 +340,21 @@ workflows:
       - pr-tools/pr-title-check:
           context: org-global
 
-      - test-unit:
-          context: org-global
-          requires:
-            - setup
-          filters:
-            tags:
-              only: /.*/
+      # - test-unit:
+      #     context: org-global
+      #     requires:
+      #       - setup
+      #     filters:
+      #       tags:
+      #         only: /.*/
 
-      - test-integration:
-          context: org-global
-          requires:
-            - setup
-          filters:
-            tags:
-              only: /.*/
+      # - test-integration:
+      #     context: org-global
+      #     requires:
+      #       - setup
+      #     filters:
+      #       tags:
+      #         only: /.*/
 
       - vulnerability-check:
           context: org-global
@@ -381,8 +381,8 @@ workflows:
       - release:
           context: org-global
           requires:
-            - test-unit
-            - test-integration
+            # - test-unit
+            # - test-integration
             - vulnerability-check
           filters:
             branches:
