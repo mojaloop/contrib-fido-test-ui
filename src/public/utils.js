@@ -1,15 +1,16 @@
 class Utils {
   static arrayBufferToBase64String(ab) {
-    return btoa(String.fromCharCode.apply(null, new Uint8Array(ab)));
+    return btoa(String.fromCharCode.apply(null, new Uint8Array(ab)))
   }
+
   static arrayBufferToString(ab) {
-    return String.fromCharCode.apply(null, new Uint8Array(ab));
+    return String.fromCharCode.apply(null, new Uint8Array(ab))
   }
 
   static stringToArrayBuffer(input) {
     // base64 to Buffer
     const binaryStr = atob(input)
-    const bufUint8Array = Uint8Array.from(binaryStr, c => c.charCodeAt(0))
+    const bufUint8Array = Uint8Array.from(binaryStr, (c) => c.charCodeAt(0))
     const ab = bufUint8Array.buffer
 
     return ab
@@ -18,7 +19,7 @@ class Utils {
   static async deriveChallengeFromConsent(input) {
     const rawChallenge = {
       consentId: input.consentId,
-      scopes: input.scopes
+      scopes: input.scopes,
     }
 
     // lazy json canonicalize - the only thing to worry about is the order of scopes objects
@@ -33,17 +34,20 @@ class Utils {
          objects (if an object is found, then its properties MUST be
          sorted), but array element order MUST NOT be changed.
     */
-    rawChallenge.scopes = rawChallenge.scopes.map(s => ({
-      accountId: s.accountId,
-      actions: s.actions
+    rawChallenge.scopes = rawChallenge.scopes.map((s) => ({
+      actions: s.actions,
+      address: s.address,
     }))
     const challengeString = JSON.stringify(rawChallenge)
-    const encoder = new TextEncoder();
-    const data = encoder.encode(challengeString);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hash));                     // convert buffer to byte array
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
-    return btoa(hashHex);
+    console.log(challengeString)
+    const encoder = new TextEncoder()
+    const data = encoder.encode(challengeString)
+    const hash = await crypto.subtle.digest('SHA-256', data)
+    const hashArray = Array.from(new Uint8Array(hash)) // convert buffer to byte array
+    const hashHex = hashArray
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('') // convert bytes to hex string
+    return btoa(hashHex)
     // return this.arrayBufferToBase64String(hash)
   }
 }
